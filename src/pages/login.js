@@ -10,6 +10,7 @@ import Button from "@mui/joy/Button"
 import Link from "@mui/joy/Link"
 import Select from "@mui/joy/Select"
 import Option from "@mui/joy/Option"
+import { useNavigate } from "react-router-dom"
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme()
@@ -39,6 +40,22 @@ function ModeToggle() {
 }
 
 export default function LoginFinal(props) {
+  const navigate = useNavigate()
+
+  const [email, setEmail] = React.useState("admin")
+  const [password, setPassword] = React.useState("password")
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    // 🔒 Fake Auth: In real apps, use an API call here
+    if (email === "admin" && password === "password") {
+      localStorage.setItem("token", "my-secret-token")
+      navigate("/")
+    } else {
+      alert("Invalid credentials")
+    }
+  }
+
   return (
     <main>
       <CssVarsProvider {...props}>
@@ -46,14 +63,14 @@ export default function LoginFinal(props) {
         <CssBaseline />
         <Sheet
           sx={{
-            width: 300,
+            width: 350,
             mx: "auto", // margin left & right
-            my: 4, // margin top & bottom
-            py: 3, // padding top & bottom
+            my: 8, // margin top & bottom
+            py: 5, // padding top & bottom
             px: 2, // padding left & right
             display: "flex",
             flexDirection: "column",
-            gap: 2,
+            gap: 3,
             borderRadius: "sm",
             boxShadow: "md",
           }}
@@ -68,27 +85,31 @@ export default function LoginFinal(props) {
           <FormControl>
             <FormLabel>Email</FormLabel>
             <Input
-              // html input attribute
               name='email'
               type='email'
-              placeholder='johndoe@email.com'
+              placeholder='Please enter your email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </FormControl>
           <FormControl>
             <FormLabel>Password</FormLabel>
             <Input
-              // html input attribute
               name='password'
               type='password'
-              placeholder='password'
+              placeholder='Please enter your password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </FormControl>
-          <Button sx={{ mt: 1 /* margin top */ }}>Log in</Button>
+          <Button onClick={handleSubmit} sx={{ mt: 1 }}>
+            Log in
+          </Button>
           <Typography
             endDecorator={<Link href='/sign-up'>Sign up</Link>}
             sx={{ fontSize: "sm", alignSelf: "center" }}
           >
-            Don&apos;t have an account?
+            Don't have an account?
           </Typography>
         </Sheet>
       </CssVarsProvider>

@@ -13,7 +13,7 @@ import Tooltip from "@mui/material/Tooltip"
 import MenuItem from "@mui/material/MenuItem"
 import AdbIcon from "@mui/icons-material/Adb"
 import { PAGES, ROUTES } from "../constants"
-import { useNavigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 
 function ResponsiveAppBar(props) {
   const navigate = useNavigate()
@@ -36,7 +36,8 @@ function ResponsiveAppBar(props) {
     setAnchorElUser(null)
   }
 
-  return (
+  const token = localStorage.getItem("token")
+  return token ? (
     <React.Fragment>
       <AppBar position='static'>
         <Container maxWidth='xl'>
@@ -120,7 +121,12 @@ function ResponsiveAppBar(props) {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={() => navigate(ROUTES.Login)}>
+                <MenuItem
+                  onClick={() => {
+                    localStorage.removeItem("token")
+                    navigate(ROUTES.Login)
+                  }}
+                >
                   <Typography sx={{ textAlign: "center" }}>Logout</Typography>
                 </MenuItem>
               </Menu>
@@ -130,6 +136,8 @@ function ResponsiveAppBar(props) {
       </AppBar>
       <Container maxWidth='xl'>{props.children}</Container>
     </React.Fragment>
+  ) : (
+    <Navigate to={ROUTES.Login} />
   )
 }
 export default ResponsiveAppBar

@@ -12,7 +12,7 @@ function App() {
     <Routes>
       <Route path={"/"} element={<Navigate to={ROUTES.Transactions} />} />
 
-      <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route path={ROUTES.Login} element={<Login />} />
 
       <Route
         path={ROUTES.Portfolio}
