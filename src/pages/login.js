@@ -8,9 +8,11 @@ import FormLabel from "@mui/joy/FormLabel"
 import Input from "@mui/joy/Input"
 import Button from "@mui/joy/Button"
 import Link from "@mui/joy/Link"
+
 import Select from "@mui/joy/Select"
 import Option from "@mui/joy/Option"
 import { useNavigate } from "react-router-dom"
+import { API_URL } from "../constants"
 
 function ModeToggle() {
   const { mode, setMode } = useColorScheme()
@@ -42,17 +44,64 @@ function ModeToggle() {
 export default function LoginFinal(props) {
   const navigate = useNavigate()
 
-  const [email, setEmail] = React.useState("admin")
-  const [password, setPassword] = React.useState("password")
+  // toggle between login and register view
+  const [isRegister, setIsRegister] = React.useState(false)
 
-  const handleSubmit = async (e) => {
+  const [email, setEmail] = React.useState("")
+  const [password, setPassword] = React.useState("")
+  const [confirmPassword, setConfirmPassword] = React.useState("")
+
+  // Error state for password mismatch
+  const [passwordError, setPasswordError] = React.useState("")
+
+  const handleLogin = async (e) => {
     e.preventDefault()
-    // 🔒 Fake Auth: In real apps, use an API call here
-    if (email === "admin" && password === "password") {
-      localStorage.setItem("token", "my-secret-token")
-      navigate("/")
-    } else {
-      alert("Invalid credentials")
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        localStorage.setItem("token", data.token)
+        alert("Login successful!")
+        navigate("/") // redirect after login
+      } else {
+        alert("Login failed: " + data.error)
+      }
+    } catch (err) {
+      alert("Request error: " + err.message)
+    }
+  }
+
+  const handleRegister = async (e) => {
+    e.preventDefault()
+
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match")
+      return
+    }
+    setPasswordError("")
+
+    try {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        alert("Registration successful! You can now log in.")
+        setIsRegister(false)
+        setEmail("")
+        setPassword("")
+        setConfirmPassword("")
+      } else {
+        alert("Registration failed: " + data.error)
+      }
+    } catch (err) {
+      alert("Request error: " + err.message)
     }
   }
 
@@ -64,10 +113,10 @@ export default function LoginFinal(props) {
         <Sheet
           sx={{
             width: 350,
-            mx: "auto", // margin left & right
-            my: 8, // margin top & bottom
-            py: 5, // padding top & bottom
-            px: 2, // padding left & right
+            mx: "auto",
+            my: 8,
+            py: 5,
+            px: 2,
             display: "flex",
             flexDirection: "column",
             gap: 3,
@@ -78,10 +127,13 @@ export default function LoginFinal(props) {
         >
           <div>
             <Typography level='h4' component='h1'>
-              <b>Welcome!</b>
+              <b>{isRegister ? "Create an account" : "Welcome!"}</b>
             </Typography>
-            <Typography level='body-sm'>Sign in to continue.</Typography>
+            <Typography level='body-sm'>
+              {isRegister ? "Sign up to get started." : "Sign in to continue."}
+            </Typography>
           </div>
+
           <FormControl>
             <FormLabel>Email</FormLabel>
             <Input
@@ -90,8 +142,10 @@ export default function LoginFinal(props) {
               placeholder='Please enter your email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </FormControl>
+
           <FormControl>
             <FormLabel>Password</FormLabel>
             <Input
@@ -100,16 +154,55 @@ export default function LoginFinal(props) {
               placeholder='Please enter your password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </FormControl>
-          <Button onClick={handleSubmit} sx={{ mt: 1 }}>
-            Log in
+
+          {isRegister && (
+            <FormControl>
+              <FormLabel>Confirm Password</FormLabel>
+              <Input
+                name='confirmPassword'
+                type='password'
+                placeholder='Confirm your password'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                error={Boolean(passwordError)}
+                aria-describedby='confirm-password-error'
+              />
+              {passwordError && (
+                <Typography
+                  id='confirm-password-error'
+                  level='body-xs'
+                  color='danger'
+                  sx={{ mt: 0.5 }}
+                >
+                  {passwordError}
+                </Typography>
+              )}
+            </FormControl>
+          )}
+
+          <Button
+            onClick={isRegister ? handleRegister : handleLogin}
+            sx={{ mt: 1 }}
+          >
+            {isRegister ? "Register" : "Log in"}
           </Button>
+
           <Typography
-            endDecorator={<Link href='/sign-up'>Sign up</Link>}
+            endDecorator={
+              <Link
+                component='button'
+                onClick={() => setIsRegister(!isRegister)}
+              >
+                {isRegister ? "Log in" : "Sign up"}
+              </Link>
+            }
             sx={{ fontSize: "sm", alignSelf: "center" }}
           >
-            Don't have an account?
+            {isRegister ? "Already have an account?" : "Don't have an account?"}
           </Typography>
         </Sheet>
       </CssVarsProvider>

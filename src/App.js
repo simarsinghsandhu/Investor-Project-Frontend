@@ -10,7 +10,7 @@ import { ROUTES } from "./constants"
 function App() {
   return (
     <Routes>
-      <Route path={"/"} element={<Navigate to={ROUTES.Transactions} />} />
+      <Route path={"/"} element={<Navigate to={ROUTES.Portfolio} />} />
 
       <Route path={ROUTES.Login} element={<Login />} />
 
