@@ -13,10 +13,15 @@ import MenuItem from "@mui/material/MenuItem"
 import AdbIcon from "@mui/icons-material/Adb"
 import { PAGES, ROUTES } from "../constants"
 import { Navigate, useNavigate } from "react-router-dom"
-import { Grid } from "@mui/material"
+import { Grid, useTheme } from "@mui/material"
 import AccountCircleIcon from "@mui/icons-material/AccountCircle"
+import { ThemeContext } from "../context/themeContext"
+import LightModeIcon from "@mui/icons-material/LightMode"
+import DarkModeIcon from "@mui/icons-material/DarkMode"
 
 function ResponsiveAppBar(props) {
+  const theme = useTheme()
+  const { toggleTheme } = React.useContext(ThemeContext)
   const navigate = useNavigate()
 
   const [anchorElNav, setAnchorElNav] = React.useState(null)
@@ -103,6 +108,13 @@ function ResponsiveAppBar(props) {
               ))}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
+              <IconButton color='inherit' onClick={toggleTheme} sx={{ mr: 1 }}>
+                {theme.palette.mode === "dark" ? (
+                  <DarkModeIcon color='inherit' />
+                ) : (
+                  <LightModeIcon color='inherit' />
+                )}
+              </IconButton>
               <Tooltip title='Open settings'>
                 <IconButton
                   onClick={handleOpenUserMenu}
