@@ -22,11 +22,52 @@ const ThemeContextProvider = ({ children }) => {
       createTheme({
         palette: {
           mode,
-          primary: {
-            main: "#1976d2",
+        },
+        components: {
+          MuiButton: {
+            defaultProps: {
+              color: "secondary",
+            },
           },
-          secondary: {
-            main: "#9c27b0",
+          MuiTextField: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiCheckbox: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiSwitch: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiRadio: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiSlider: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiLinearProgress: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiCircularProgress: {
+            defaultProps: {
+              color: "secondary",
+            },
+          },
+          MuiPaginationItem: {
+            defaultProps: {
+              color: "secondary",
+            },
           },
         },
       }),
