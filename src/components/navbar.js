@@ -42,9 +42,12 @@ function ResponsiveAppBar(props) {
     <React.Fragment>
       <AppBar position='static' color='secondary'>
         <Container maxWidth='xl'>
-          <Toolbar disableGutters sx={{ px: 4 }}>
-            <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-
+          <Toolbar disableGutters sx={{ px: { xs: 1, md: 4 } }}>
+            <AdbIcon
+              sx={{
+                mr: 1,
+              }}
+            />
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size='large'
@@ -85,7 +88,6 @@ function ResponsiveAppBar(props) {
                 ))}
               </Menu>
             </Box>
-            <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {PAGES.map((page) => (
                 <Button

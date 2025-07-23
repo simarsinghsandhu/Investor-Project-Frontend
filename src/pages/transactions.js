@@ -1,9 +1,21 @@
-import { useEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useState } from "react"
 import { DataGrid } from "@mui/x-data-grid"
-import { Grid, Typography } from "@mui/material"
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Pagination,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material"
 import { API_URL } from "../constants"
 
 const Transactions = () => {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
+
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [paginationModel, setPaginationModel] = useState({
@@ -43,12 +55,21 @@ const Transactions = () => {
     // eslint-disable-next-line
   }, [paginationModel])
 
+  useLayoutEffect(() => {
+    if (isMobile && paginationModel.pageSize !== 10) {
+      setPaginationModel({
+        page: 0,
+        pageSize: 10,
+      })
+    }
+    // eslint-disable-next-line
+  }, [isMobile])
+
   const columns = [
     {
       field: "stock",
       headerName: "Stock",
       sortable: false,
-      width: 250,
     },
     {
       field: "date",
@@ -70,7 +91,7 @@ const Transactions = () => {
     {
       field: "type",
       headerName: "Transaction Type",
-      width: 250,
+      width: 200,
       sortable: false,
       valueFormatter: (value) =>
         value === "deposit" ? "Deposited" : "Withdrawn",
@@ -94,35 +115,89 @@ const Transactions = () => {
   ]
 
   return (
-    <Grid container flexDirection={"column"}>
+    <Grid container flexDirection='column'>
       <Typography variant='h4' color='secondary' gutterBottom>
         Transactions
       </Typography>
-      <DataGrid
-        rows={transactions}
-        columns={columns}
-        rowHeight={50}
-        paginationMode='server'
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        rowCount={rowCount}
-        pageSizeOptions={[5, 10]}
-        getRowId={(row) => row.id}
-        loading={loading}
-        disableRowSelectionOnClick
-        sx={{
-          border: "none",
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "secondary.light",
-            color: "secondary.main",
-            fontWeight: "bold",
-            fontSize: "1rem",
-          },
-          "& .MuiDataGrid-columnHeaderTitle": {
-            fontWeight: "bold",
-          },
-        }}
-      />
+
+      {isMobile ? (
+        <Grid container spacing={2}>
+          {transactions.map((t) => (
+            <Grid size={{ xs: 12, sm: 6 }} key={t.id}>
+              <Card
+                sx={{
+                  borderLeft: "6px solid",
+                  borderColor: "secondary.main",
+                  backgroundColor: "background.paper",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  height: "100%",
+                }}
+              >
+                <CardContent>
+                  <Typography variant='h6' color='secondary'>
+                    {t.stock}
+                  </Typography>
+                  <Typography variant='body2'>
+                    {new Date(t.date).toLocaleString()}
+                  </Typography>
+                  <Typography
+                    variant='body2'
+                    color={t.type === "deposit" ? "success" : "error"}
+                  >
+                    {t.type === "deposit" ? "Deposited" : "Withdrawn"}: $
+                    {parseFloat(t.amount).toFixed(2)} CAD
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+          <Grid size={12} mt={3}>
+            <Grid container justifyContent='end'>
+              <Pagination
+                count={Math.ceil(rowCount / paginationModel.pageSize)}
+                page={paginationModel.page + 1}
+                onChange={(e, newPage) =>
+                  setPaginationModel((prev) => ({
+                    ...prev,
+                    page: newPage - 1,
+                  }))
+                }
+                color='secondary'
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      ) : (
+        <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <DataGrid
+            rows={transactions}
+            columns={columns}
+            rowHeight={50}
+            paginationMode='server'
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            rowCount={rowCount}
+            pageSizeOptions={[5, 10, 25]}
+            getRowId={(row) => row.id}
+            loading={loading}
+            disableRowSelectionOnClick
+            sx={{
+              border: "none",
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "secondary.light",
+                color: "secondary.main",
+                fontWeight: "bold",
+                fontSize: "1rem",
+              },
+              "& .MuiDataGrid-columnHeaderTitle": {
+                fontWeight: "bold",
+              },
+            }}
+          />
+        </Box>
+      )}
     </Grid>
   )
 }
