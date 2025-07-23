@@ -57,7 +57,7 @@ export default function LoginFinal(props) {
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const res = await fetch(`${API_URL}/api/auth/login`, {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -85,7 +85,7 @@ export default function LoginFinal(props) {
     setPasswordError("")
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/register`, {
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

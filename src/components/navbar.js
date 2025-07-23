@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem"
 import AdbIcon from "@mui/icons-material/Adb"
 import { PAGES, ROUTES } from "../constants"
 import { Navigate, useNavigate } from "react-router-dom"
+import { Grid } from "@mui/material"
 
 function ResponsiveAppBar(props) {
   const navigate = useNavigate()
@@ -39,7 +40,7 @@ function ResponsiveAppBar(props) {
   const token = localStorage.getItem("token")
   return token ? (
     <React.Fragment>
-      <AppBar position='static'>
+      <AppBar position='static' color='secondary'>
         <Container maxWidth='xl'>
           <Toolbar disableGutters>
             <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
@@ -134,7 +135,11 @@ function ResponsiveAppBar(props) {
           </Toolbar>
         </Container>
       </AppBar>
-      <Container maxWidth='xl'>{props.children}</Container>
+      <Container maxWidth='lg' sx={{ paddingY: "20px" }}>
+        <Grid item xs={12}>
+          {props.children}
+        </Grid>
+      </Container>
     </React.Fragment>
   ) : (
     <Navigate to={ROUTES.Login} />
