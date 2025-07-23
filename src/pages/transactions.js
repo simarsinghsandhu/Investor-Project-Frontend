@@ -95,7 +95,7 @@ const Transactions = () => {
 
   return (
     <Grid container flexDirection={"column"}>
-      <Typography variant='h5' gutterBottom>
+      <Typography variant='h4' color='secondary' gutterBottom>
         Transactions
       </Typography>
       <DataGrid
@@ -110,6 +110,18 @@ const Transactions = () => {
         getRowId={(row) => row.id}
         loading={loading}
         disableRowSelectionOnClick
+        sx={{
+          border: "none",
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: "secondary.light",
+            color: "secondary.main",
+            fontWeight: "bold",
+            fontSize: "1rem",
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            fontWeight: "bold",
+          },
+        }}
       />
     </Grid>
   )

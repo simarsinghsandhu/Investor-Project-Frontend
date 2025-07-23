@@ -1,61 +1,35 @@
-import * as React from "react"
-import { CssVarsProvider, useColorScheme } from "@mui/joy/styles"
-import Sheet from "@mui/joy/Sheet"
-import CssBaseline from "@mui/joy/CssBaseline"
-import Typography from "@mui/joy/Typography"
-import FormControl from "@mui/joy/FormControl"
-import FormLabel from "@mui/joy/FormLabel"
-import Input from "@mui/joy/Input"
-import Button from "@mui/joy/Button"
-import Link from "@mui/joy/Link"
-
-import Select from "@mui/joy/Select"
-import Option from "@mui/joy/Option"
+import React, { useState } from "react"
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Link,
+} from "@mui/material"
 import { useNavigate } from "react-router-dom"
 import { API_URL } from "../constants"
+import { toast } from "react-toastify"
 
-function ModeToggle() {
-  const { mode, setMode } = useColorScheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-  if (!mounted) {
-    return <Button variant='soft'>Change mode</Button>
-  }
-
-  return (
-    <Select
-      variant='soft'
-      value={mode}
-      onChange={(event, newMode) => {
-        setMode(newMode)
-      }}
-      sx={{ width: "max-content" }}
-    >
-      <Option value='system'>System</Option>
-      <Option value='light'>Light</Option>
-      <Option value='dark'>Dark</Option>
-    </Select>
-  )
-}
-
-export default function LoginFinal(props) {
+export default function Login() {
   const navigate = useNavigate()
-
-  // toggle between login and register view
-  const [isRegister, setIsRegister] = React.useState(false)
-
-  const [email, setEmail] = React.useState("")
-  const [password, setPassword] = React.useState("")
-  const [confirmPassword, setConfirmPassword] = React.useState("")
-
-  // Error state for password mismatch
-  const [passwordError, setPasswordError] = React.useState("")
+  const [isRegister, setIsRegister] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordError, setPasswordError] = useState("")
 
   const handleLogin = async (e) => {
     e.preventDefault()
+    if (!email) {
+      toast.warning("Email is required!")
+      return
+    }
+    if (!password) {
+      toast.warning("Password is required!")
+      return
+    }
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -65,21 +39,29 @@ export default function LoginFinal(props) {
       const data = await res.json()
       if (res.ok) {
         localStorage.setItem("token", data.token)
-        alert("Login successful!")
-        navigate("/") // redirect after login
+        toast.success("Login successful!")
+        navigate("/")
       } else {
-        alert("Login failed: " + data.error)
+        toast.error("Login failed: " + data.error)
       }
     } catch (err) {
-      alert("Request error: " + err.message)
+      toast.error("Request error: " + err.message)
     }
   }
 
   const handleRegister = async (e) => {
     e.preventDefault()
-
+    if (!email) {
+      toast.warning("Email is required!")
+      return
+    }
+    if (!password) {
+      toast.warning("Password is required!")
+      return
+    }
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match")
+      toast.warning("Passwords do not match")
       return
     }
     setPasswordError("")
@@ -92,120 +74,116 @@ export default function LoginFinal(props) {
       })
       const data = await res.json()
       if (res.ok) {
-        alert("Registration successful! You can now log in.")
+        toast.success("Registration successful! You can now log in.")
         setIsRegister(false)
         setEmail("")
         setPassword("")
         setConfirmPassword("")
       } else {
-        alert("Registration failed: " + data.error)
+        toast.error("Registration failed: " + data.error)
       }
     } catch (err) {
-      alert("Request error: " + err.message)
+      toast.error("Request error: " + err.message)
     }
   }
 
   return (
-    <main>
-      <CssVarsProvider {...props}>
-        <ModeToggle />
-        <CssBaseline />
-        <Sheet
-          sx={{
-            width: 350,
-            mx: "auto",
-            my: 8,
-            py: 5,
-            px: 2,
-            display: "flex",
-            flexDirection: "column",
-            gap: 3,
-            borderRadius: "sm",
-            boxShadow: "md",
-          }}
-          variant='outlined'
-        >
-          <div>
-            <Typography level='h4' component='h1'>
-              <b>{isRegister ? "Create an account" : "Welcome!"}</b>
-            </Typography>
-            <Typography level='body-sm'>
-              {isRegister ? "Sign up to get started." : "Sign in to continue."}
-            </Typography>
-          </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(to right, #8a23f7ff, #8d296dff)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        px: 2,
+      }}
+    >
+      <Card
+        sx={{
+          maxWidth: 400,
+          width: "100%",
+          p: 2,
+        }}
+        elevation={6}
+      >
+        <CardContent>
+          <Typography
+            variant='h4'
+            color='secondary'
+            align='center'
+            fontWeight={700}
+            gutterBottom
+          >
+            Investor Dashboard
+          </Typography>
 
-          <FormControl>
-            <FormLabel>Email</FormLabel>
-            <Input
-              name='email'
+          <Typography variant='body1' align='center' gutterBottom>
+            {isRegister
+              ? "Sign up to manage your investments."
+              : "Log in to view your dashboard."}
+          </Typography>
+
+          <Box
+            component='form'
+            noValidate
+            onSubmit={isRegister ? handleRegister : handleLogin}
+          >
+            <TextField
+              label='Email'
               type='email'
-              placeholder='Please enter your email'
+              fullWidth
+              required
+              margin='normal'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              variant='outlined'
             />
-          </FormControl>
 
-          <FormControl>
-            <FormLabel>Password</FormLabel>
-            <Input
-              name='password'
+            <TextField
+              label='Password'
               type='password'
-              placeholder='Please enter your password'
+              fullWidth
+              required
+              margin='normal'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
+              variant='outlined'
             />
-          </FormControl>
 
-          {isRegister && (
-            <FormControl>
-              <FormLabel>Confirm Password</FormLabel>
-              <Input
-                name='confirmPassword'
+            {isRegister && (
+              <TextField
+                label='Confirm Password'
                 type='password'
-                placeholder='Confirm your password'
+                fullWidth
+                required
+                margin='normal'
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                required
                 error={Boolean(passwordError)}
-                aria-describedby='confirm-password-error'
+                helperText={passwordError}
+                variant='outlined'
               />
-              {passwordError && (
-                <Typography
-                  id='confirm-password-error'
-                  level='body-xs'
-                  color='danger'
-                  sx={{ mt: 0.5 }}
-                >
-                  {passwordError}
-                </Typography>
-              )}
-            </FormControl>
-          )}
+            )}
 
-          <Button
-            onClick={isRegister ? handleRegister : handleLogin}
-            sx={{ mt: 1 }}
-          >
-            {isRegister ? "Register" : "Log in"}
-          </Button>
+            <Button
+              type='submit'
+              variant='contained'
+              color='secondary'
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              {isRegister ? "Register" : "Login"}
+            </Button>
+          </Box>
 
-          <Typography
-            endDecorator={
-              <Link
-                component='button'
-                onClick={() => setIsRegister(!isRegister)}
-              >
-                {isRegister ? "Log in" : "Sign up"}
-              </Link>
-            }
-            sx={{ fontSize: "sm", alignSelf: "center" }}
-          >
-            {isRegister ? "Already have an account?" : "Don't have an account?"}
+          <Typography variant='body2' align='center' sx={{ mt: 2 }}>
+            {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+            <Link component='button' onClick={() => setIsRegister(!isRegister)}>
+              {isRegister ? "Log In" : "Register"}
+            </Link>
           </Typography>
-        </Sheet>
-      </CssVarsProvider>
-    </main>
+        </CardContent>
+      </Card>
+    </Box>
   )
 }

@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography"
 import Menu from "@mui/material/Menu"
 import MenuIcon from "@mui/icons-material/Menu"
 import Container from "@mui/material/Container"
-import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
 import Tooltip from "@mui/material/Tooltip"
 import MenuItem from "@mui/material/MenuItem"
@@ -15,6 +14,7 @@ import AdbIcon from "@mui/icons-material/Adb"
 import { PAGES, ROUTES } from "../constants"
 import { Navigate, useNavigate } from "react-router-dom"
 import { Grid } from "@mui/material"
+import AccountCircleIcon from "@mui/icons-material/AccountCircle"
 
 function ResponsiveAppBar(props) {
   const navigate = useNavigate()
@@ -42,7 +42,7 @@ function ResponsiveAppBar(props) {
     <React.Fragment>
       <AppBar position='static' color='secondary'>
         <Container maxWidth='xl'>
-          <Toolbar disableGutters>
+          <Toolbar disableGutters sx={{ px: 4 }}>
             <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -102,8 +102,12 @@ function ResponsiveAppBar(props) {
             </Box>
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title='Open settings'>
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+                <IconButton
+                  onClick={handleOpenUserMenu}
+                  sx={{ p: 0 }}
+                  size='large'
+                >
+                  <AccountCircleIcon fontSize='large' color='inherit' />
                 </IconButton>
               </Tooltip>
               <Menu

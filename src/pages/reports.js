@@ -62,70 +62,77 @@ const REPORTS = () => {
   }
 
   return (
-    <Grid container spacing={2}>
-      {reports.length === 0 ? (
-        <Typography variant='h6' color='textSecondary'>
-          No reports available
+    <>
+      <Grid size={12}>
+        <Typography variant='h4' color='secondary' gutterBottom>
+          Reports
         </Typography>
-      ) : (
-        reports.map((report, index) => (
-          <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
-            <Card
-              elevation={4}
-              sx={{
-                borderLeft: "6px solid",
-                borderColor: "secondary.main",
-                backgroundColor: "background.paper",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                height: "100%",
-              }}
-            >
-              <CardContent>
-                <Typography variant='h6' color='secondary' gutterBottom>
-                  {report.name}
-                </Typography>
+      </Grid>
+      <Grid container spacing={2}>
+        {reports.length === 0 ? (
+          <Typography variant='h6' color='textSecondary'>
+            No reports available
+          </Typography>
+        ) : (
+          reports.map((report, index) => (
+            <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
+              <Card
+                elevation={4}
+                sx={{
+                  borderLeft: "6px solid",
+                  borderColor: "secondary.main",
+                  backgroundColor: "background.paper",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  height: "100%",
+                }}
+              >
+                <CardContent>
+                  <Typography variant='h6' color='secondary' gutterBottom>
+                    {report.name}
+                  </Typography>
 
-                <Typography
-                  variant='body2'
-                  color='text.secondary'
-                  sx={{ mb: 1 }}
-                >
-                  Generated:{" "}
-                  <Box component='span' fontWeight='medium'>
-                    {new Date(report.created_at).toLocaleString()}
-                  </Box>
-                </Typography>
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{ mb: 1 }}
+                  >
+                    Generated:{" "}
+                    <Box component='span' fontWeight='medium'>
+                      {new Date(report.created_at).toLocaleString()}
+                    </Box>
+                  </Typography>
 
-                <Typography
-                  variant='body2'
-                  color='text.secondary'
-                  sx={{
-                    wordBreak: "break-word",
-                    fontStyle: "italic",
-                  }}
-                >
-                  URL: {report.url}
-                </Typography>
-              </CardContent>
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{
+                      wordBreak: "break-word",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    URL: {report.url}
+                  </Typography>
+                </CardContent>
 
-              <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
-                <Button
-                  variant='contained'
-                  color='secondary'
-                  size='small'
-                  startIcon={<DownloadIcon />}
-                  onClick={() => handleDownload(report)}
-                >
-                  Download
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))
-      )}
-    </Grid>
+                <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    size='small'
+                    startIcon={<DownloadIcon />}
+                    onClick={() => handleDownload(report)}
+                  >
+                    Download
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))
+        )}
+      </Grid>
+    </>
   )
 }
 
