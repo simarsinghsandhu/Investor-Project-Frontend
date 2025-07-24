@@ -69,6 +69,19 @@ const ThemeContextProvider = ({ children }) => {
               color: "secondary",
             },
           },
+          MuiCard: {
+            styleOverrides: {
+              root: ({ theme }) => ({
+                borderLeft: "6px solid",
+                borderColor: theme.palette.secondary.main,
+                backgroundColor: theme.palette.background.paper,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
+              }),
+            },
+          },
         },
       }),
     [mode]

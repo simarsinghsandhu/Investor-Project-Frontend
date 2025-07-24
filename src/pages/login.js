@@ -103,6 +103,7 @@ export default function Login() {
           maxWidth: 400,
           width: "100%",
           p: 2,
+          borderLeft: "none",
         }}
         elevation={6}
       >

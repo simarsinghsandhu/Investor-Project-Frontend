@@ -76,18 +76,7 @@ const REPORTS = () => {
         ) : (
           reports.map((report, index) => (
             <Grid item size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
-              <Card
-                elevation={4}
-                sx={{
-                  borderLeft: "6px solid",
-                  borderColor: "secondary.main",
-                  backgroundColor: "background.paper",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  height: "100%",
-                }}
-              >
+              <Card elevation={4}>
                 <CardContent>
                   <Typography variant='h6' color='secondary' gutterBottom>
                     {report.name}

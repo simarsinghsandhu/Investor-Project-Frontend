@@ -124,17 +124,7 @@ const Transactions = () => {
         <Grid container spacing={2}>
           {transactions.map((t) => (
             <Grid size={{ xs: 12, sm: 6 }} key={t.id}>
-              <Card
-                sx={{
-                  borderLeft: "6px solid",
-                  borderColor: "secondary.main",
-                  backgroundColor: "background.paper",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  height: "100%",
-                }}
-              >
+              <Card>
                 <CardContent>
                   <Typography variant='h6' color='secondary'>
                     {t.stock}
