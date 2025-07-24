@@ -7,7 +7,10 @@ import {
   CircularProgress,
   Alert,
   Divider,
+  Box,
+  Paper,
 } from "@mui/material"
+import { PieChart, pieArcLabelClasses } from "@mui/x-charts/PieChart"
 import { API_URL } from "../constants"
 
 const Summary = () => {
@@ -62,63 +65,97 @@ const Summary = () => {
 
   const { user, summary, totalInvestment } = portfolio
 
+  const stockData = Object.entries(summary).map(([stock, value]) => ({
+    id: stock,
+    value: value,
+    label: stock,
+  }))
+
   return (
-    <Grid container spacing={4} direction='column'>
-      <Grid size={12}>
-        <Typography variant='h4' color='secondary' gutterBottom>
-          Portfolio Summary
-        </Typography>
-        <Typography variant='subtitle1' color='textSecondary'>
-          User: {user.email}
-        </Typography>
-      </Grid>
+    <Box>
+      <Typography variant='h4' color='secondary' gutterBottom>
+        Portfolio Summary
+      </Typography>
+      <Typography variant='subtitle1' color='textSecondary' mb={2}>
+        Welcome, {user.email}
+      </Typography>
 
-      <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-        <Card elevation={4}>
-          <CardContent>
-            <Typography variant='h6' color='secondary'>
-              Total Investment:
-            </Typography>
-            <Typography variant='h5' fontWeight='bold'>
-              ${totalInvestment.toFixed(2)} CAD
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-
-      <Grid size={12}>
-        <Typography variant='h6' color='secondary' gutterBottom>
-          Investments by Stock
-        </Typography>
-        <Grid container spacing={2}>
-          {Object.entries(summary).length === 0 ? (
-            <Typography>No investments yet.</Typography>
-          ) : (
-            Object.entries(summary).map(([stock, amount], index) => (
-              <Grid size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
-                <Card
-                  key={stock}
-                  sx={{
-                    mb: 2,
-                  }}
-                  elevation={4}
-                >
+      <Grid container spacing={4}>
+        <Grid size={{ xs: 12, md: 7 }}>
+          <Grid container spacing={4}>
+            <Grid size={12}>
+              <Grid>
+                <Card elevation={4}>
                   <CardContent>
-                    <Typography variant='subtitle1' color='secondary'>
-                      {stock}
+                    <Typography variant='h6' color='secondary'>
+                      Total Investment
                     </Typography>
-                    <Typography fontWeight='bold'>
-                      ${amount.toFixed(2)} CAD
+                    <Typography
+                      variant='h4'
+                      fontWeight='bold'
+                      color='text.primary'
+                    >
+                      ${totalInvestment.toFixed(2)} CAD
                     </Typography>
                   </CardContent>
-                  {index !== Object.entries(summary).length - 1 && <Divider />}
                 </Card>
               </Grid>
-            ))
-          )}
+            </Grid>
+            <Grid size={12}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant='h6' color='secondary' gutterBottom>
+                  Investment Distribution
+                </Typography>
+                <PieChart
+                  series={[
+                    {
+                      data: stockData,
+                      arcLabel: (item) => `$${item.value.toFixed(0)}`,
+                    },
+                  ]}
+                  width={400}
+                  height={300}
+                  sx={{
+                    [`& .${pieArcLabelClasses.root}`]: {
+                      fill: "#fff",
+                      fontSize: 12,
+                    },
+                  }}
+                />
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Typography variant='h6' color='secondary' gutterBottom>
+            Individual Investments
+          </Typography>
+          <Grid container spacing={3}>
+            {Object.entries(summary).length === 0 ? (
+              <Typography>No investments yet.</Typography>
+            ) : (
+              Object.entries(summary).map(([stock, amount], index) => (
+                <Grid size={{ xs: 12, sm: 6 }} key={stock}>
+                  <Card elevation={4}>
+                    <CardContent>
+                      <Typography variant='subtitle1' color='secondary'>
+                        {stock}
+                      </Typography>
+                      <Typography variant='h6' fontWeight='bold'>
+                        ${amount.toFixed(2)} CAD
+                      </Typography>
+                    </CardContent>
+                    {index !== Object.entries(summary).length - 1 && (
+                      <Divider />
+                    )}
+                  </Card>
+                </Grid>
+              ))
+            )}
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </Box>
   )
 }
 
