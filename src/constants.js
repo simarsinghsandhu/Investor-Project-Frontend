@@ -12,4 +12,6 @@ export const ROUTES = {
   [REPORTS]: "/reports",
 }
 
+export const STOCKS = ["AAPL", "TSLA", "GOOGL", "AMZN", "MSFT", "NFLX", "META"]
+
 export const API_URL = process.env.REACT_APP_API_URL

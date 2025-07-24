@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   TextField,
-  Button,
   Card,
   CardContent,
   Link,
@@ -11,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom"
 import { API_URL } from "../constants"
 import { toast } from "react-toastify"
+import { LoadingButton } from "@mui/lab"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -19,6 +19,7 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordError, setPasswordError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -31,6 +32,7 @@ export default function Login() {
       return
     }
     try {
+      setLoading(true)
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -46,6 +48,8 @@ export default function Login() {
       }
     } catch (err) {
       toast.error("Request error: " + err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -67,6 +71,7 @@ export default function Login() {
     setPasswordError("")
 
     try {
+      setLoading(true)
       const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,6 +89,8 @@ export default function Login() {
       }
     } catch (err) {
       toast.error("Request error: " + err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -166,15 +173,16 @@ export default function Login() {
               />
             )}
 
-            <Button
+            <LoadingButton
               type='submit'
               variant='contained'
               color='secondary'
               fullWidth
               sx={{ mt: 2 }}
+              loading={loading}
             >
               {isRegister ? "Register" : "Login"}
-            </Button>
+            </LoadingButton>
           </Box>
 
           <Typography variant='body2' align='center' sx={{ mt: 2 }}>

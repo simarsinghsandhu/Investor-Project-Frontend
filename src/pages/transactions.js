@@ -2,15 +2,32 @@ import { useEffect, useLayoutEffect, useState } from "react"
 import { DataGrid } from "@mui/x-data-grid"
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Grid,
+  IconButton,
+  Menu,
+  MenuItem,
   Pagination,
   Typography,
   useMediaQuery,
   useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material"
-import { API_URL } from "../constants"
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import { API_URL, STOCKS } from "../constants"
+import { toast } from "react-toastify"
+import { LoadingButton } from "@mui/lab"
 
 const Transactions = () => {
   const theme = useTheme()
@@ -23,6 +40,22 @@ const Transactions = () => {
     pageSize: 10,
   })
   const [rowCount, setRowCount] = useState(0)
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [selectedRow, setSelectedRow] = useState(null)
+
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogMode, setDialogMode] = useState("create")
+  const [formData, setFormData] = useState({
+    stock: "",
+    date: "",
+    type: "deposit",
+    amount: "",
+  })
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const openMenu = Boolean(anchorEl)
 
   const fetchTransactions = async () => {
     setLoading(true)
@@ -38,7 +71,6 @@ const Transactions = () => {
           },
         }
       )
-
       const data = await res.json()
       setTransactions(data.transactions || [])
       setRowCount(data.total || 0)
@@ -49,7 +81,6 @@ const Transactions = () => {
     }
   }
 
-  // Fetch Transaction on update of page or pageSize
   useEffect(() => {
     fetchTransactions()
     // eslint-disable-next-line
@@ -57,13 +88,107 @@ const Transactions = () => {
 
   useLayoutEffect(() => {
     if (isMobile && paginationModel.pageSize !== 10) {
-      setPaginationModel({
-        page: 0,
-        pageSize: 10,
-      })
+      setPaginationModel({ page: 0, pageSize: 10 })
     }
     // eslint-disable-next-line
   }, [isMobile])
+
+  const handleMenuClick = (event, row) => {
+    setAnchorEl(event.currentTarget)
+    setSelectedRow(row)
+  }
+
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+    setSelectedRow(null)
+  }
+
+  const handleDelete = async () => {
+    handleMenuClose()
+
+    const token = localStorage.getItem("token")
+    try {
+      const res = await fetch(`${API_URL}/transactions/${selectedRow.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!res.ok) throw new Error("Delete failed")
+
+      toast.success("Transaction deleted successfully")
+      fetchTransactions()
+    } catch (err) {
+      toast.error("Error deleting transaction")
+      console.error(err)
+    }
+  }
+
+  const handleEdit = () => {
+    setFormData(selectedRow)
+    setDialogMode("edit")
+    setDialogOpen(true)
+    handleMenuClose()
+  }
+
+  const handleDialogClose = () => {
+    setDialogOpen(false)
+    setFormData({ stock: "", date: "", type: "deposit", amount: "" })
+  }
+
+  const handleFormChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleAddClick = () => {
+    setFormData({
+      stock: STOCKS[0], // auto-select first stock
+      date: new Date().toISOString().slice(0, 16), // current datetime (local input format)
+      type: "deposit",
+      amount: 0,
+    })
+    setDialogMode("add")
+    setDialogOpen(true)
+  }
+
+  const handleFormSubmit = async () => {
+    setIsSubmitting(true)
+
+    const token = localStorage.getItem("token")
+    const method = dialogMode === "edit" ? "PUT" : "POST"
+    const url =
+      dialogMode === "edit"
+        ? `${API_URL}/transactions/${formData.id}`
+        : `${API_URL}/transactions`
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!res.ok) throw new Error("Failed to save transaction")
+
+      toast.success(
+        dialogMode === "edit"
+          ? "Transaction updated successfully"
+          : "Transaction created successfully"
+      )
+
+      handleDialogClose()
+      fetchTransactions()
+    } catch (err) {
+      toast.error("Error saving transaction")
+      console.error(err)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const columns = [
     {
@@ -112,6 +237,16 @@ const Transactions = () => {
         )
       },
     },
+    {
+      field: "actions",
+      headerName: "",
+      sortable: false,
+      renderCell: (params) => (
+        <IconButton onClick={(e) => handleMenuClick(e, params.row)}>
+          <MoreVertIcon />
+        </IconButton>
+      ),
+    },
   ]
 
   return (
@@ -120,20 +255,34 @@ const Transactions = () => {
         Transactions
       </Typography>
 
+      <Grid alignSelf={"end"} mb={2}>
+        <Button variant='contained' color='secondary' onClick={handleAddClick}>
+          Add Transaction
+        </Button>
+      </Grid>
+
       {isMobile ? (
         <Grid container spacing={2}>
           {transactions.map((t) => (
             <Grid size={{ xs: 12, sm: 6 }} key={t.id}>
               <Card>
                 <CardContent>
-                  <Typography variant='h6' color='secondary'>
-                    {t.stock}
-                  </Typography>
+                  <Grid
+                    container
+                    justifyContent='space-between'
+                    alignItems='center'
+                  >
+                    <Typography variant='h6' color='secondary'>
+                      {t.stock}
+                    </Typography>
+                    <IconButton onClick={(e) => handleMenuClick(e, t)}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  </Grid>
                   <Typography variant='body2'>
                     {new Date(t.date).toLocaleString()}
                   </Typography>
                   <Typography
-                    variant='body2'
                     color={t.type === "deposit" ? "success" : "error"}
                   >
                     {t.type === "deposit" ? "Deposited" : "Withdrawn"}: $
@@ -149,10 +298,7 @@ const Transactions = () => {
                 count={Math.ceil(rowCount / paginationModel.pageSize)}
                 page={paginationModel.page + 1}
                 onChange={(e, newPage) =>
-                  setPaginationModel((prev) => ({
-                    ...prev,
-                    page: newPage - 1,
-                  }))
+                  setPaginationModel((prev) => ({ ...prev, page: newPage - 1 }))
                 }
                 color='secondary'
               />
@@ -188,6 +334,101 @@ const Transactions = () => {
           />
         </Box>
       )}
+
+      <Menu anchorEl={anchorEl} open={openMenu} onClose={handleMenuClose}>
+        <MenuItem onClick={handleEdit}>Edit</MenuItem>
+        <MenuItem onClick={handleDelete}>Delete</MenuItem>
+      </Menu>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        fullWidth
+        maxWidth='xs'
+      >
+        <DialogTitle>
+          {dialogMode === "edit" ? "Edit Transaction" : "Add Transaction"}
+        </DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth margin='normal'>
+            <InputLabel id='stock-label'>Stock</InputLabel>
+            <Select
+              labelId='stock-label'
+              name='stock'
+              value={formData.stock}
+              label='Stock'
+              onChange={handleFormChange}
+            >
+              {STOCKS.map((symbol) => (
+                <MenuItem key={symbol} value={symbol}>
+                  {symbol}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth margin='normal'>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateTimePicker
+                maxDate={new Date()}
+                label='Date'
+                value={formData.date ? new Date(formData.date) : null}
+                onChange={(newValue) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    date: newValue ? newValue.toISOString() : "",
+                  }))
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} fullWidth margin='normal' />
+                )}
+              />
+            </LocalizationProvider>
+          </FormControl>
+
+          <FormControl fullWidth margin='normal'>
+            <InputLabel id='type-label'>Transaction Type</InputLabel>
+            <Select
+              labelId='type-label'
+              name='type'
+              value={formData.type}
+              label='Transaction Type'
+              onChange={handleFormChange}
+            >
+              <MenuItem value='deposit'>Deposit</MenuItem>
+              <MenuItem value='withdraw'>Withdraw</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField
+            fullWidth
+            margin='normal'
+            label='Amount'
+            name='amount'
+            type='number'
+            value={formData.amount}
+            onChange={handleFormChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <LoadingButton
+            onClick={handleFormSubmit}
+            variant='contained'
+            color='secondary'
+            loading={isSubmitting}
+            disabled={
+              dialogMode !== "edit" &&
+              (!formData.stock ||
+                !formData.amount ||
+                !formData.type ||
+                !formData.date)
+            }
+          >
+            {dialogMode === "edit" ? "Update" : "Add"}
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
     </Grid>
   )
 }

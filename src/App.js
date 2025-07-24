@@ -45,7 +45,7 @@ function App() {
         />
       </Routes>
       <ToastContainer
-        position='bottom-right'
+        position='top-right'
         autoClose={3000} // auto close after 3 seconds
         hideProgressBar
         newestOnTop={false}
