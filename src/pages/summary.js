@@ -42,6 +42,7 @@ const Summary = () => {
   }
 
   useEffect(() => {
+    document.title = "Investor Dashboard: Portfolio"
     fetchPortfolio()
   }, [])
 

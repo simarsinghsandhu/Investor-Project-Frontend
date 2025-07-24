@@ -17,24 +17,25 @@ const REPORTS = () => {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const getReports = async () => {
-      try {
-        const token = localStorage.getItem("token")
-        const res = await fetch(`${API_URL}/reports`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        const data = await res.json()
-        setReports(data.reports)
-      } catch (err) {
-        console.error("Error fetching reports:", err)
-      } finally {
-        setLoading(false)
-      }
+  const getReports = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`${API_URL}/reports`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      const data = await res.json()
+      setReports(data.reports)
+    } catch (err) {
+      console.error("Error fetching reports:", err)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
+    document.title = "Investor Dashboard: Reports"
     getReports()
   }, [])
 

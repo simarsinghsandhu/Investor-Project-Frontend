@@ -82,6 +82,10 @@ const Transactions = () => {
   }
 
   useEffect(() => {
+    document.title = "Investor Dashboard: Transaction"
+  }, [])
+
+  useEffect(() => {
     fetchTransactions()
     // eslint-disable-next-line
   }, [paginationModel])

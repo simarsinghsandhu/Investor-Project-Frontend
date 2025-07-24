@@ -8,8 +8,14 @@ import Navbar from "./components/navbar"
 import { ROUTES } from "./constants"
 import { ToastContainer, Zoom } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import { setFaviconFromAdbIcon } from "./utils/setFaviconFromIcon"
+import { useEffect } from "react"
 
 function App() {
+  useEffect(() => {
+    setFaviconFromAdbIcon()
+  }, [])
+
   return (
     <>
       <Routes>

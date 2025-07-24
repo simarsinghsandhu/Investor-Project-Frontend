@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Box,
   Typography,
@@ -20,6 +20,10 @@ export default function Login() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordError, setPasswordError] = useState("")
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    document.title = "Investor Dashboard: Login"
+  }, [])
 
   const handleLogin = async (e) => {
     e.preventDefault()
