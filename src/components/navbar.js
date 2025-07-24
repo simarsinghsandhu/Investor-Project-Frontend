@@ -45,7 +45,7 @@ function ResponsiveAppBar(props) {
   const token = localStorage.getItem("token")
   return token ? (
     <React.Fragment>
-      <AppBar position='static' color='secondary'>
+      <AppBar position='sticky' color='secondary'>
         <Container maxWidth='xl'>
           <Toolbar disableGutters sx={{ px: { xs: 1, md: 4 } }}>
             <AdbIcon
