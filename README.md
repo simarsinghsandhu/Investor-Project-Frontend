@@ -1,70 +1,135 @@
-# Getting Started with Create React App
+# Investor Project Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the **frontend application** for the Investor Project, built using **React.js** and **Material UI (MUI)**. The app allows users to register, log in, manage financial transactions, view portfolio summaries, access reports, and switch between light and dark themes. It is designed to be responsive and user-friendly across all devices.
 
-## Available Scripts
+🌐 **Live Demo**: [https://investor-project-frontend.vercel.app](https://investor-project-frontend.vercel.app)  
+🔗 **Backend**: [https://investor-project-backend.onrender.com](https://investor-project-backend.onrender.com)  
+📦 **GitHub Repo**: [Investor Project Frontend](https://github.com/simarsinghsandhu/Investor-Project-Frontend)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🔐 Authentication
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- User registration via `/api/register`
+- User login via `/api/login`
+- Auth token is stored securely and used in all protected API requests
 
-### `npm test`
+### 📊 Portfolio Page
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Displays a summary of all transactions (deposits & withdrawals)
+- Shows total investment and breakdown per stock
+- Displays user email and a **Pie Chart** for visual summary
 
-### `npm run build`
+### 💼 Transactions Page
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Lists all user transactions with server-side pagination (DataGrid)
+- Full **CRUD** operations:
+  - ➕ Add transaction (form with default values and stock selector)
+  - ✏️ Edit transaction
+  - ❌ Delete transaction
+- Responsive layout:
+  - Desktop: Material UI DataGrid
+  - Mobile: Card layout for better UX
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 📑 Reports Page
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Displays available financial reports as cards
+- Each card allows **PDF download** of a sample report
 
-### `npm run eject`
+### 🎨 Theming
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Toggle between **Light** and **Dark** mode from the top navbar
+- Theme preference is applied across all pages
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 📱 Responsive Design
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Fully responsive design with adaptive layouts using **Material UI's Grid system**
+- Optimized for both desktop and mobile views
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## Tech Stack
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **React.js**
+- **Material UI (MUI v5)**
+- **React Router DOM**
+- **Axios**
+- **JWT-based Auth (with localStorage)**
+- **Chart.js** (for Pie chart visualization)
+- **MUI DataGrid** (with server-side pagination)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## Environment Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### For local development:
 
-### Analyzing the Bundle Size
+```
+REACT_APP_API_URL=http://localhost:5000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### For production (already hosted):
 
-### Making a Progressive Web App
+```
+REACT_APP_API_URL=https://investor-project-backend.onrender.com
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## Setup Instructions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. **Clone the repo**
 
-### Deployment
+```bash
+git clone https://github.com/simarsinghsandhu/Investor-Project-Frontend.git
+cd Investor-Project-Frontend
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+2. **Install dependencies**
 
-### `npm run build` fails to minify
+```
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3. **Set environment variables**
+
+Create a .env.local file and add the appropriate API URL.
+
+4. **Start the development server**
+
+```
+npm start
+```
+
+5. **Open in browser at http://localhost:3000**
+
+## Folder Structure
+
+```bash
+src/
+├── api/               # Axios API setup
+├── components/        # Reusable components (Navbar, Footer, Dialogs, etc.)
+├── pages/             # Main page views (Login, Portfolio, Transactions, Reports)
+├── context/           # Theme and Auth context
+├── utils/             # Helper functions
+└── App.js             # Routes and layout
+
+```
+
+## 📦 Future Improvements
+
+- Add filtering/sorting to transactions
+- Add user profile settings page
+- Allow uploading and managing PDF reports
+
+---
+
+## 📄 License
+
+MIT License © Simar Singh Sandhu
+
+---
+
+Feel free to open issues or contribute!
