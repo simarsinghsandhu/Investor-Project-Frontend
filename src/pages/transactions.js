@@ -48,7 +48,7 @@ const Transactions = () => {
   const [dialogMode, setDialogMode] = useState("create")
   const [formData, setFormData] = useState({
     stock: "",
-    date: "",
+    date: new Date(),
     type: "deposit",
     amount: "",
   })
@@ -130,7 +130,8 @@ const Transactions = () => {
   }
 
   const handleEdit = () => {
-    setFormData(selectedRow)
+    const formatedDate = new Date(selectedRow.date)
+    setFormData({ ...selectedRow, date: formatedDate })
     setDialogMode("edit")
     setDialogOpen(true)
     handleMenuClose()
@@ -138,7 +139,7 @@ const Transactions = () => {
 
   const handleDialogClose = () => {
     setDialogOpen(false)
-    setFormData({ stock: "", date: "", type: "deposit", amount: "" })
+    setFormData({ stock: "", date: new Date(), type: "deposit", amount: "" })
   }
 
   const handleFormChange = (e) => {
@@ -148,7 +149,7 @@ const Transactions = () => {
   const handleAddClick = () => {
     setFormData({
       stock: STOCKS[0], // auto-select first stock
-      date: new Date().toISOString().slice(0, 16), // current datetime (local input format)
+      date: new Date(), // current datetime (local input format)
       type: "deposit",
       amount: 0,
     })
@@ -376,11 +377,11 @@ const Transactions = () => {
               <DateTimePicker
                 maxDate={new Date()}
                 label='Date'
-                value={formData.date ? new Date(formData.date) : null}
+                value={formData.date}
                 onChange={(newValue) => {
                   setFormData((prev) => ({
                     ...prev,
-                    date: newValue ? newValue.toISOString() : "",
+                    date: newValue,
                   }))
                 }}
                 renderInput={(params) => (
@@ -412,6 +413,7 @@ const Transactions = () => {
             type='number'
             value={formData.amount}
             onChange={handleFormChange}
+            inputProps={{ min: 0 }}
           />
         </DialogContent>
         <DialogActions>
